@@ -1,4 +1,4 @@
-# Config-Driven Scraper & Viewer
+# Media Catalogue Viewer
 
 A site-agnostic web scraper that is driven by a small **rules file**, plus a local web **viewer** for searching and exploring what it collected.
 
@@ -50,7 +50,7 @@ flowchart LR
 Requires Python 3.9+.
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/config-driven-scraper.git
+git clone https://github.com/Saboor27/media_catalogue_viewer.git
 cd config-driven-scraper
 
 python -m venv .venv
