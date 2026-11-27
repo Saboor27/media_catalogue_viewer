@@ -1,0 +1,70 @@
+{
+  "_how_to_use": "Copy this file, rename it, and edit the values for your site. Keys starting with an underscore are comments and are ignored. Run `python generic_scraper.py --config sites/yourfile.json --test` to see what gets extracted before a full run. Keep configs for private sites out of version control.",
+
+  "name": "my_site",
+  "base_url": "https://example.com",
+  "user_agent": "generic-scraper/1.0 (your contact or project name)",
+  "respect_robots": true,
+  "workers": 4,
+  "delay": 0.5,
+
+  "_age_gate": "OPTIONAL. Only if the site shows a confirmation button first. A real browser clicks it once and its cookies are reused for fast HTTP fetching. Needs: pip install selenium",
+  "age_gate": { "click_selector": "a[data-age-action='confirm']" },
+
+  "_use_browser": "OPTIONAL. Set true if pages are rendered by JavaScript and plain HTML has no data.",
+  "use_browser": false,
+
+  "_pagination": "mode 'pattern': pages follow a URL pattern. {base} and {page} are filled in. The page count comes from ONE of: total_pages (number), total_pages_from (a rule), or total_items_from (a rule) + items_per_page. If none is given, pages are fetched until one has no items. mode 'next_link': needs first_url and next_selector (a link to the next page).",
+  "pagination": {
+    "mode": "pattern",
+    "first_url": "{base}/?per_page=75",
+    "url_pattern": "{base}/page/{page}/?per_page=75",
+    "first_page_number": 1,
+    "total_items_from": { "selector": "div.result-count", "regex": "([\\d,]+)" },
+    "items_per_page": 75
+  },
+
+  "_listing": "One 'card' per item on a listing page. 'link' is the URL of the item's detail page (also the unique key). Every entry in 'fields' becomes a column.",
+  "listing": {
+    "item_selector": "div.item",
+    "link": { "selector": "a.item-link", "attr": "href", "absolute": true },
+    "fields": {
+      "title": { "selector": ".item-title" },
+      "thumbnail": { "selector": "img", "attr": "src", "absolute": true },
+      "duration": { "selector": ".duration" },
+      "tags": { "selector": ".tag", "multiple": true }
+    },
+    "_ignore": "OPTIONAL rules to skip cards that are not real items (ads). equals/contains compare a field (default: title) case-insensitively; 'external' skips links to other websites.",
+    "ignore": [
+      { "field": "title", "equals": "Sponsored" },
+      { "field": "url", "contains": "/ads/" },
+      { "external": true }
+    ]
+  },
+
+  "_detail": "Rules for each item's own page. root_selector = the element holding the content (if it is missing the page counts as failed). 'fields' = single values; 'pairs' = label/value rows. Add \"scope\": \"page\" to a field or pair to search the whole page instead of only the root element.",
+  "detail": {
+    "enabled": true,
+    "root_selector": "div.content",
+    "wait_selector": "div.content",
+    "fields": {
+      "title": { "selector": "h1" },
+      "views": { "selector": ".views", "regex": "([\\d,\\.]+)" },
+      "release_date": { "selector": ".release", "attr": "text" }
+    },
+    "pairs": {
+      "meta": {
+        "row_selector": ".meta-row",
+        "key_selector": ".meta-label",
+        "value_selector": ".meta-value",
+        "multiple": true,
+        "strip_chars": ","
+      }
+    }
+  },
+
+  "_downloads": "OPTIONAL. Files to download for each item, taken from a listing field. Enable with --download thumbnails (or --download all).",
+  "downloads": {
+    "thumbnails": { "field": "thumbnail", "folder": "thumbnails", "default_ext": ".jpg" }
+  }
+}

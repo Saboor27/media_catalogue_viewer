@@ -1,0 +1,52 @@
+{
+  "_comment": "Site rules for https://books.toscrape.com - a public sandbox made for scraping practice ('We love being scraped!'). 1000 books, 20 per page, 50 pages. Run with --test first to verify every selector.",
+
+  "name": "books_toscrape",
+  "base_url": "https://books.toscrape.com",
+  "user_agent": "generic-scraper/1.0 (portfolio project)",
+  "respect_robots": true,
+  "workers": 4,
+  "delay": 0.5,
+
+  "pagination": {
+    "mode": "pattern",
+    "first_url": "{base}/catalogue/page-1.html",
+    "url_pattern": "{base}/catalogue/page-{page}.html",
+    "total_pages_from": { "selector": "li.current", "regex": "of\\s+(\\d+)" }
+  },
+
+  "listing": {
+    "item_selector": "article.product_pod",
+    "link": { "selector": "h3 a", "attr": "href", "absolute": true },
+    "fields": {
+      "title": { "selector": "h3 a", "attr": "title" },
+      "thumbnail": { "selector": "div.image_container img", "attr": "src", "absolute": true },
+      "price": { "selector": "p.price_color" },
+      "rating": { "selector": "p.star-rating", "attr": "class", "regex": "star-rating\\s+(\\w+)" },
+      "availability": { "selector": "p.availability" }
+    },
+    "ignore": []
+  },
+
+  "detail": {
+    "enabled": true,
+    "root_selector": "article.product_page",
+    "wait_selector": "article.product_page",
+    "fields": {
+      "title": { "selector": "h1" },
+      "description": { "selector": "#product_description + p" },
+      "category": { "selector": "ul.breadcrumb li:nth-child(3) a", "scope": "page" }
+    },
+    "pairs": {
+      "product_information": {
+        "row_selector": "table.table-striped tr",
+        "key_selector": "th",
+        "value_selector": "td"
+      }
+    }
+  },
+
+  "downloads": {
+    "thumbnails": { "field": "thumbnail", "folder": "thumbnails", "default_ext": ".jpg" }
+  }
+}
