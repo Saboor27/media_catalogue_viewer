@@ -1,0 +1,3 @@
+# Core dependencies (the scraper and the viewer)
+beautifulsoup4>=4.12
+lxml>=5.0
